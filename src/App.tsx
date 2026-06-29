@@ -14,7 +14,6 @@ import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import Testimonials from './components/Testimonials';
 import LivePurchaseFeed from './components/LivePurchaseFeed';
-import Admin from './pages/Admin';
 import AuthPage from './pages/Auth';
 import UserDashboard from './pages/UserDashboard';
 
@@ -369,7 +368,7 @@ export default function App() {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [activePlayer, setActivePlayer] = useState<'all' | 'Cristiano Ronaldo' | 'Lionel Messi'>('all');
-  const [page, setPage] = useState<'home' | 'admin' | 'login' | 'signup' | 'dashboard'>('home');
+  const [page, setPage] = useState<'home' | 'login' | 'signup' | 'dashboard'>('home');
   const experiencesRef = useRef<HTMLElement>(null);
 
   // ── All hooks must be before any conditional returns ──
@@ -432,7 +431,6 @@ export default function App() {
   // ── Conditional page renders (no hooks below this line) ──
   if (page === 'login') return <AuthPage mode="login" onSwitch={(m) => setPage(m)} onBack={() => setPage('home')} />;
   if (page === 'signup') return <AuthPage mode="signup" onSwitch={(m) => setPage(m)} onBack={() => setPage('home')} />;
-  if (page === 'admin') return <Admin onBack={() => setPage('home')} />;
 
   if (page === 'dashboard') {
     if (authLoading) return (
@@ -445,7 +443,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg,#f0f7ff 0%,#fff 40%,#f8fafc 100%)' }}>
-      <Navbar cartCount={cartCount} onCartOpen={() => setShowCart(true)} onNavigate={(p) => setPage(p as 'home' | 'admin')} currentPage={page} />
+      <Navbar cartCount={cartCount} onCartOpen={() => setShowCart(true)} onNavigate={(p) => setPage(p as 'home')} currentPage={page} />
 
       {/* Hero — split screen */}
       <section className="relative overflow-hidden" style={{ minHeight: '88vh' }}>

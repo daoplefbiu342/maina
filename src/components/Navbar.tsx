@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trophy, ShoppingCart, Menu, X, Shield, User, LogOut } from 'lucide-react';
+import { Trophy, ShoppingCart, Menu, X, User, LogOut } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 
 interface NavbarProps {
@@ -70,13 +70,6 @@ export default function Navbar({ cartCount, onCartOpen, onNavigate, currentPage 
               {label}
             </button>
           ))}
-          <button
-            onClick={() => handleNav('admin')}
-            className="ml-2 flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all"
-          >
-            <Shield className="w-3.5 h-3.5" />
-            Admin
-          </button>
         </nav>
 
         {/* Right actions */}
@@ -186,13 +179,6 @@ export default function Navbar({ cartCount, onCartOpen, onNavigate, currentPage 
               Login / Sign Up
             </button>
           )}
-          <button
-            onClick={() => handleNav('admin')}
-            className="w-full text-left px-4 py-3 rounded-xl text-sm font-semibold text-gray-400 hover:bg-gray-50 flex items-center gap-2 transition-colors"
-          >
-            <Shield className="w-4 h-4" />
-            Admin
-          </button>
         </div>
       )}
     </header>
