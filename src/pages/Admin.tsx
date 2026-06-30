@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import {
-  Shield, Lock, Eye, EyeOff, TrendingUp, ShoppingBag, Users, DollarSign,
-  Search, ChevronDown, CheckCircle, Clock, XCircle, RotateCcw,
-  CreditCard, Zap, AlertTriangle, RefreshCw, MapPin, Mail, Phone,
-  Trophy, ExternalLink, ArrowLeft, Download, Wallet, Smartphone, Link, Key, Globe,
-  Package, Truck, Calendar, FileText, Plus
+  Shield, Lock, Eye, EyeOff, TrendingUp, ShoppingBag, DollarSign,
+  Search, ChevronDown, CheckCircle, Clock, XCircle,
+  CreditCard, AlertTriangle, RefreshCw,
+  Trophy, ExternalLink, ArrowLeft, Key,
+  Package, Truck, Globe, Bitcoin
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Booking } from '../types';
@@ -58,8 +58,6 @@ export default function Admin({ onBack }: AdminProps) {
   const [tab, setTab] = useState<AdminTab>('orders');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [oxapayMerchantId, setOxapayMerchantId] = useState('');
-  const [paymentSaved, setPaymentSaved] = useState(false);
 
   // Tracking update form state
   const [trackingStatus, setTrackingStatus] = useState('');
@@ -91,13 +89,6 @@ export default function Admin({ onBack }: AdminProps) {
       .order('created_at', { ascending: false });
     if (!error && data) setBookings(data as BookingWithTracking[]);
     setLoading(false);
-  };
-
-  const updateOrderStatus = async (id: string, status: string) => {
-    setUpdating(id);
-    await supabase.from('bookings').update({ status }).eq('id', id);
-    setBookings((prev) => prev.map((b) => b.id === id ? { ...b, status } : b));
-    setUpdating(null);
   };
 
   const updateTracking = async (booking: BookingWithTracking) => {
@@ -570,15 +561,15 @@ export default function Admin({ onBack }: AdminProps) {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#8b5cf6,#6366f1)' }}>
-                    <CreditCard className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>
+                    <Bitcoin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-black text-gray-900 text-lg">Oxapay Payment Gateway</h3>
-                    <p className="text-gray-500 text-sm">Accept cards, Apple Pay, CashApp, and 50+ payment methods</p>
+                    <h3 className="font-black text-gray-900 text-lg">BTCPay Server</h3>
+                    <p className="text-gray-500 text-sm">Accept Bitcoin payments via your self-hosted BTCPay Server</p>
                   </div>
-                  <div className="ml-auto px-3 py-1 rounded-full text-xs font-bold bg-yellow-50 text-yellow-700 border border-yellow-200">
-                    Not Connected
+                  <div className="ml-auto px-3 py-1 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
+                    Active
                   </div>
                 </div>
               </div>
@@ -587,79 +578,75 @@ export default function Admin({ onBack }: AdminProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                      <Key className="w-4 h-4 text-violet-500" />
-                      Oxapay Merchant ID
+                      <Globe className="w-4 h-4 text-amber-500" />
+                      BTCPay Server URL
                     </label>
                     <input
                       type="text"
-                      value={oxapayMerchantId}
-                      onChange={(e) => setOxapayMerchantId(e.target.value)}
-                      placeholder="merchant_..."
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent font-mono"
+                      placeholder="https://btcpay.example.com"
+                      value=""
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono bg-gray-50"
+                      disabled
                     />
+                    <p className="text-xs text-gray-400 mt-1">Set via BTCPAY_URL Edge Function secret</p>
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                      <Lock className="w-4 h-4 text-violet-500" />
-                      API Secret Key
+                      <Key className="w-4 h-4 text-amber-500" />
+                      Store ID
                     </label>
                     <input
-                      type="password"
-                      placeholder="sk_live_... (stored securely server-side)"
+                      type="text"
+                      placeholder="Set via BTCPAY_STORE_ID"
                       value=""
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-violet-500 font-mono bg-gray-50"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono bg-gray-50"
                       disabled
                     />
-                    <p className="text-xs text-gray-400 mt-1">Stored securely in Edge Function secrets</p>
+                    <p className="text-xs text-gray-400 mt-1">Set via BTCPAY_STORE_ID Edge Function secret</p>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-violet-500" />
-                    Oxapay Dashboard
+                    <Lock className="w-4 h-4 text-amber-500" />
+                    API Key
                   </label>
                   <input
-                    type="text"
-                    value="https://oxapay.com/"
-                    readOnly
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50"
+                    type="password"
+                    placeholder="Set via BTCPAY_API_KEY Edge Function secret"
+                    value=""
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:ring-2 focus:ring-amber-500 font-mono bg-gray-50"
+                    disabled
                   />
+                  <p className="text-xs text-gray-400 mt-1">Stored securely in Edge Function secrets. Never exposed to the client.</p>
                 </div>
 
                 <div className="flex gap-3">
-                  <button
-                    onClick={() => { setPaymentSaved(true); setTimeout(() => setPaymentSaved(false), 3000); }}
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90"
-                    style={{ background: paymentSaved ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'linear-gradient(135deg,#8b5cf6,#6366f1)' }}
-                  >
-                    {paymentSaved ? <><CheckCircle className="w-4 h-4" />Connected!</> : 'Connect Oxapay'}
-                  </button>
                   <a
-                    href="https://oxapay.com/"
+                    href="https://docs.btcpayserver.org/API/Greenfield/v1/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-amber-700 border border-amber-200 hover:bg-amber-50 transition-colors"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Open Oxapay Dashboard
+                    BTCPay Greenfield API Docs
                   </a>
                 </div>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h3 className="font-black text-gray-900 text-lg mb-4">Supported Payment Methods</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <h3 className="font-black text-gray-900 text-lg mb-4">Payment Flow</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { name: 'Apple Pay', icon: '🍎', active: true },
-                  { name: 'Cash App', icon: '💵', active: true },
-                  { name: 'Visa', icon: '💳', active: true },
-                  { name: 'Mastercard', icon: '💳', active: true },
-                ].map(({ name, icon }) => (
-                  <div key={name} className="p-4 rounded-xl border border-gray-100 flex items-center gap-3">
+                  { step: '1', name: 'Create Invoice', desc: 'Edge function calls BTCPay Greenfield API', icon: '⚡' },
+                  { step: '2', name: 'Pay with Bitcoin', desc: 'Customer pays via BTCPay checkout page', icon: '₿' },
+                  { step: '3', name: 'Webhook Confirmation', desc: 'BTCPay webhook updates booking status', icon: '✓' },
+                ].map(({ step, name, desc, icon }) => (
+                  <div key={step} className="p-4 rounded-xl border border-gray-100 flex flex-col items-center text-center gap-2">
                     <span className="text-2xl">{icon}</span>
-                    <span className="font-bold text-gray-900 text-sm">{name}</span>
+                    <p className="font-bold text-gray-900 text-sm">{name}</p>
+                    <p className="text-xs text-gray-500">{desc}</p>
                   </div>
                 ))}
               </div>

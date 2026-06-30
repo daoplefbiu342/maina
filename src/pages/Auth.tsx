@@ -50,7 +50,7 @@ export default function AuthPage({ mode, onSwitch, onBack }: AuthPageProps) {
             <Check className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-black text-gray-900 mb-2">Account Created!</h2>
-          <p className="text-gray-500 mb-1">Please check your email to confirm your account.</p>
+          <p className="text-gray-500 mb-1">Your account is ready to use.</p>
           <p className="text-sm text-gray-400 mb-8 font-mono">{email}</p>
           <button
             onClick={() => onSwitch('login')}

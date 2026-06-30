@@ -23,7 +23,7 @@ export default function LivePurchaseFeed() {
 
   useEffect(() => {
     const extras: LivePurchase[] = EXTRA_PURCHASES.map((p, i) => ({ ...p, id: `extra-${i}`, created_at: new Date().toISOString() }));
-    supabase.from('live_purchases').select('*').order('created_at', { ascending: false }).limit(20)
+    Promise.resolve(supabase.from('live_purchases').select('*').order('created_at', { ascending: false }).limit(20))
       .then(({ data }) => setPurchases([...(data || []), ...extras]))
       .catch(() => setPurchases(extras));
   }, []);

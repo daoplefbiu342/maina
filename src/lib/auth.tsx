@@ -19,7 +19,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Safety timeout — if Supabase is unreachable, don't block the UI forever
     const timeout = setTimeout(() => setLoading(false), 3000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -45,12 +44,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, name: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: name } },
     });
-    return { error: error?.message ?? null };
+    if (signUpError) return { error: signUpError.message };
+    // Auto-signin after signup so user is immediately authenticated
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: signInError?.message ?? null };
   };
 
   const signIn = async (email: string, password: string) => {

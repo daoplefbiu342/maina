@@ -1,4 +1,4 @@
-import { Trophy, Mail, Phone, MapPin, Instagram, Twitter, Youtube, Facebook, User } from 'lucide-react';
+import { Trophy, Mail, Phone, MapPin, Instagram, Twitter, Youtube, Facebook } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (page: string) => void;

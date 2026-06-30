@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  ShoppingCart, X, Plus, Minus, Check, Trophy, ChevronRight,
+  ShoppingCart, Check, Trophy, ChevronRight,
   Wifi, Star, Dumbbell, Ticket, Shield, Globe, Users, Zap,
-  Camera, Video, Award, Crown, User as UserIcon,
+  Camera, Video, Award, Crown,
 } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import { useAuth } from './lib/auth';
@@ -373,7 +373,7 @@ export default function App() {
 
   // ── All hooks must be before any conditional returns ──
   useEffect(() => {
-    supabase.from('products').select('*').order('player_name').order('price', { ascending: false })
+    Promise.resolve(supabase.from('products').select('*').order('player_name').order('price', { ascending: false }))
       .then(({ data, error }) => {
         if (!error && data && data.length > 0) setProducts(data);
         else setProducts(FALLBACK_PRODUCTS);
@@ -411,7 +411,6 @@ export default function App() {
   const updateQty = (id: string, delta: number) =>
     setCart((prev) => prev.map((i) => i.id === id ? { ...i, quantity: Math.max(0, i.quantity + delta) } : i).filter((i) => i.quantity > 0));
 
-  const cartTotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
   const isInCart = (id: string) => cart.some((i) => i.id === id);
 
@@ -591,7 +590,13 @@ export default function App() {
       <AboutSection />
 
       {/* Footer */}
-      <Footer onNavigate={(p) => setPage(p as 'home' | 'admin' | 'login' | 'signup' | 'dashboard')} />
+      <Footer onNavigate={(p) => {
+        if (p === 'admin') {
+          window.location.href = '/#/admin';
+        } else {
+          setPage(p as 'home' | 'login' | 'signup' | 'dashboard');
+        }
+      }} />
 
       {/* Cart */}
       {showCart && (
@@ -609,7 +614,6 @@ export default function App() {
         <Checkout
           cart={cart}
           onClose={() => setShowCheckout(false)}
-          onSuccess={() => setCart([])}
           user={user}
         />
       )}

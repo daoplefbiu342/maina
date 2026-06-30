@@ -16,7 +16,7 @@ export default function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
-    supabase.from('testimonials').select('*').order('created_at')
+    Promise.resolve(supabase.from('testimonials').select('*').order('created_at'))
       .then(({ data }) => {
         if (data && data.length > 0) setTestimonials(data);
         else setTestimonials(FALLBACK_TESTIMONIALS);
